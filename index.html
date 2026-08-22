@@ -2,14 +2,28 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
+
+<!-- 画面サイズを正しく取得するための設定（iPhone対応） -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<!-- Safari の上部バーを消す（ホーム画面追加時） -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
 <title>図書館利用案内</title>
- 
+
+<style>
+    body {
+        margin: 0;
+        background: black;
+        overflow: hidden;
+    }
+</style>
+
 </head>
- 
-<body style="margin:0;background:black;">
- 
+
+<body>
+
 <div
 id="screen"
 style="
@@ -17,274 +31,164 @@ position:relative;
 width:1365px;
 height:767px;
 ">
- 
-<img
-id="bg"
-src="1.jpg"
-style="
-position:absolute;
-left:0;
-top:0;
-width:1365px;
-height:767px;
-z-index:1;
-">
- 
-<!-- 開館時間と休館日 -->
-<div
-id="btnOpen"
-style="
-position:absolute;
-left:190px;
-top:150px;
-width:300px;
-height:80px;
-background:transparent;
-border:none;
-z-index:9999;
-cursor:pointer;
-display:none;
-">
+    <img
+    id="bg"
+    src="1.jpg"
+    style="
+    position:absolute;
+    left:0;
+    top:0;
+    width:1365px;
+    height:767px;
+    z-index:1;
+    ">
+    
+    <!-- 開館時間と休館日 -->
+    <div id="btnOpen" style="position:absolute;left:190px;top:150px;width:300px;height:80px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
+
+    <!-- 貸出 -->
+    <div id="btnLend" style="position:absolute;left:190px;top:235px;width:300px;height:95px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
+
+    <!-- 返却 -->
+    <div id="btnReturn" style="position:absolute;left:190px;top:340px;width:300px;height:85px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
+
+    <!-- 検索 -->
+    <div id="btnSearch" style="position:absolute;left:190px;top:435px;width:300px;height:85px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
+
+    <!-- 予約 -->
+    <div id="btnReserve" style="position:absolute;left:190px;top:530px;width:300px;height:80px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
+
+    <!-- 駐車場 -->
+    <div id="btnParking" style="position:absolute;left:190px;top:620px;width:300px;height:85px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
+
 </div>
- 
-<!-- 貸出 -->
-<div
-id="btnLend"
-style="
-position:absolute;
-left:190px;
-top:235px;
-width:300px;
-height:95px;
-background:transparent;
-border:none;
-z-index:9999;
-cursor:pointer;
-display:none;
-">
-</div>
- 
-<!-- 返却 -->
-<div
-id="btnReturn"
-style="
-position:absolute;
-left:190px;
-top:340px;
-width:300px;
-height:85px;
-background:transparent;
-border:none;
-z-index:9999;
-cursor:pointer;
-display:none;
-">
-</div>
- 
-<!-- 検索 -->
-<div
-id="btnSearch"
-style="
-position:absolute;
-left:190px;
-top:435px;
-width:300px;
-height:85px;
-background:transparent;
-border:none;
-z-index:9999;
-cursor:pointer;
-display:none;
-">
-</div>
- 
-<!-- 予約 -->
-<div
-id="btnReserve"
-style="
-position:absolute;
-left:190px;
-top:530px;
-width:300px;
-height:80px;
-background:transparent;
-border:none;
-z-index:9999;
-cursor:pointer;
-display:none;
-">
-</div>
- 
-<!-- 駐車場 -->
-<div
-id="btnParking"
-style="
-position:absolute;
-left:190px;
-top:620px;
-width:300px;
-height:85px;
-background:transparent;
-border:none;
-z-index:9999;
-cursor:pointer;
-display:none;
-">
-</div>
- 
-</div>
- 
+
 <script>
- 
+
 let currentPage = 1;
 let timerId = null;
- 
+
 const bg = document.getElementById("bg");
- 
+
 const buttons = [
- 
-document.getElementById("btnOpen"),
-document.getElementById("btnLend"),
-document.getElementById("btnReturn"),
-document.getElementById("btnSearch"),
-document.getElementById("btnReserve"),
-document.getElementById("btnParking")
- 
+    document.getElementById("btnOpen"),
+    document.getElementById("btnLend"),
+    document.getElementById("btnReturn"),
+    document.getElementById("btnSearch"),
+    document.getElementById("btnReserve"),
+    document.getElementById("btnParking")
 ];
- 
+
 function showButtons(){
- 
-buttons.forEach(function(btn){
- 
-btn.style.display = "block";
- 
-});
- 
+    buttons.forEach(btn => btn.style.display = "block");
 }
- 
+
 function hideButtons(){
- 
-buttons.forEach(function(btn){
- 
-btn.style.display = "none";
- 
-});
- 
+    buttons.forEach(btn => btn.style.display = "none");
 }
- 
+
 function resetTimer(){
- 
-clearTimeout(timerId);
- 
-if(currentPage === 1){
-return;
+    clearTimeout(timerId);
+
+    if(currentPage === 1){
+        return;
+    }
+
+    timerId = setTimeout(function(){
+        currentPage = 1;
+        bg.src = "1.jpg";
+        hideButtons();
+    },60000);
 }
- 
-timerId = setTimeout(function(){
- 
-currentPage = 1;
-bg.src = "1.jpg";
- 
-hideButtons();
- 
-},60000);
- 
-}
- 
+
 function showPage(page){
- 
-currentPage = page;
- 
-bg.src = page + ".jpg";
- 
-if(page === 1){
- 
-hideButtons();
- 
-}else{
- 
-showButtons();
- 
+    currentPage = page;
+    bg.src = page + ".jpg";
+
+    if(page === 1){
+        hideButtons();
+    }else{
+        showButtons();
+    }
+
+    resetTimer();
 }
- 
-resetTimer();
- 
-}
- 
+
 /* 1.jpg表示中はどこを押しても2.jpg */
- 
 document.addEventListener("pointerdown",function(){
- 
-if(currentPage === 1){
- 
-showPage(2);
-return;
- 
-}
- 
-resetTimer();
- 
+    if(currentPage === 1){
+        showPage(2);
+        return;
+    }
+    resetTimer();
 });
- 
+
 /* 開館時間と休館日 */
- 
 document.getElementById("btnOpen").onclick = function(e){
- 
-e.stopPropagation();
-showPage(2);
- 
+    e.stopPropagation();
+    showPage(2);
 };
- 
+
 /* 貸出 */
- 
 document.getElementById("btnLend").onclick = function(e){
- 
-e.stopPropagation();
-showPage(3);
- 
+    e.stopPropagation();
+    showPage(3);
 };
- 
+
 /* 返却 */
- 
 document.getElementById("btnReturn").onclick = function(e){
- 
-e.stopPropagation();
-showPage(4);
- 
+    e.stopPropagation();
+    showPage(4);
 };
- 
+
 /* 検索 */
- 
 document.getElementById("btnSearch").onclick = function(e){
- 
-e.stopPropagation();
-showPage(5);
- 
+    e.stopPropagation();
+    showPage(5);
 };
- 
+
 /* 予約 */
- 
 document.getElementById("btnReserve").onclick = function(e){
- 
-e.stopPropagation();
-showPage(6);
- 
+    e.stopPropagation();
+    showPage(6);
 };
- 
+
 /* 駐車場 */
- 
 document.getElementById("btnParking").onclick = function(e){
- 
-e.stopPropagation();
-showPage(7);
- 
+    e.stopPropagation();
+    showPage(7);
 };
- 
+
 /* 初期状態 */
- 
 hideButtons();
- 
+
+
+/* ⭐ 画面フィット処理（Masahiro さんのアプリ専用） */
+function fitScreen() {
+    const screen = document.getElementById("screen");
+
+    const baseW = 1365;  // 元の幅
+    const baseH = 767;   // 元の高さ
+
+    const screenW = window.innerWidth;
+    const screenH = window.innerHeight;
+
+    const scaleW = screenW / baseW;
+    const scaleH = screenH / baseH;
+
+    const scale = Math.min(scaleW, scaleH);
+
+    screen.style.transform = `scale(${scale})`;
+    screen.style.transformOrigin = "top left";
+
+    document.body.style.width = screenW + "px";
+    document.body.style.height = screenH + "px";
+}
+
+window.addEventListener("load", fitScreen);
+window.addEventListener("resize", fitScreen);
+
 </script>
- 
+
 </body>
 </html>
