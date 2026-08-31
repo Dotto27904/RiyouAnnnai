@@ -18,6 +18,31 @@
         background: black;
         overflow: hidden;
     }
+
+    #clock{
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 35px;
+
+        text-align: center;
+
+        color: white;
+        font-family: sans-serif;
+        font-weight: bold;
+
+        font-size: 84px;
+        line-height: 1;
+
+        z-index: 20000;
+
+        white-space: nowrap;
+        pointer-events: none;
+
+        text-shadow:
+            0 0 8px rgba(0,0,0,0.8),
+            0 0 16px rgba(0,0,0,0.6);
+    }
 </style>
 
 </head>
@@ -42,7 +67,7 @@ height:767px;
     height:767px;
     z-index:1;
     ">
-    
+
     <!-- 開館時間と休館日 -->
     <div id="btnOpen" style="position:absolute;left:190px;top:150px;width:300px;height:80px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
 
@@ -62,6 +87,8 @@ height:767px;
     <div id="btnParking" style="position:absolute;left:190px;top:620px;width:300px;height:85px;background:transparent;border:none;z-index:9999;cursor:pointer;display:none;"></div>
 
 </div>
+
+<div id="clock"></div>
 
 <script>
 
@@ -167,8 +194,8 @@ hideButtons();
 function fitScreen() {
     const screen = document.getElementById("screen");
 
-    const baseW = 1365;  // 元の幅
-    const baseH = 767;   // 元の高さ
+    const baseW = 1365;
+    const baseH = 767;
 
     const screenW = window.innerWidth;
     const screenH = window.innerHeight;
@@ -187,6 +214,28 @@ function fitScreen() {
 
 window.addEventListener("load", fitScreen);
 window.addEventListener("resize", fitScreen);
+
+
+/* 日時表示 */
+function updateClock(){
+
+    const now = new Date();
+
+    const days = ["日","月","火","水","木","金","土"];
+
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const w = days[now.getDay()];
+
+    const h = String(now.getHours()).padStart(2,"0");
+    const min = String(now.getMinutes()).padStart(2,"0");
+
+    document.getElementById("clock").textContent =
+        `${m}月${d}日（${w}） ${h}:${min}`;
+}
+
+updateClock();
+setInterval(updateClock,1000);
 
 </script>
 
